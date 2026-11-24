@@ -1,0 +1,6 @@
+{
+  "name": "AgriSmart",
+  "description": "AgriSmart (MVP Demo) — A soil-based crop recommender for farmers based on soil nutrients and environmental conditions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

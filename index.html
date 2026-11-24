@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgriSmart — Soil-Based Crop Recommender</title>
+    <meta
+      name="description"
+      content="AgriSmart (MVP Demo) — A soil-based crop recommender for farmers based on soil nutrients and environmental conditions."
+    />
+    <meta property="og:title" content="AgriSmart — Soil-Based Crop Recommender" />
+    <meta
+      property="og:description"
+      content="AgriSmart (MVP Demo) — A soil-based crop recommender for farmers based on soil nutrients and environmental conditions."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --color-primary: #2e7d32;
+        --color-primary-hover: #246628;
+        --color-primary-active: #1b511f;
+        --color-primary-soft: #e8f5e9;
+        --color-primary-border: #c8e6c9;
+        --color-accent: #6d4c41;
+        --color-accent-soft: #f5efe9;
+        --color-gold: #c88a12;
+        --color-gold-bg: #fffbeb;
+        --color-gold-border: #f3d27a;
+        --color-bg: #fafaf5;
+        --color-surface: #ffffff;
+        --color-text: #1f2933;
+        --color-text-muted: #52606d;
+        --color-border: #dce3dc;
+        --color-error: #c62828;
+        --color-error-bg: #fef2f2;
+        --color-error-border: #f5c2c2;
+        --radius-card: 16px;
+        --radius-control: 12px;
+        --shadow-card: 0 8px 28px rgba(31, 41, 51, 0.06), 0 1px 3px rgba(31, 41, 51, 0.04);
+        --shadow-highlight: 0 10px 26px rgba(46, 125, 50, 0.11), 0 2px 6px rgba(200, 138, 18, 0.08);
+        --transition-fast: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Header */
+      .site-header {
+        background-color: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .header-inner {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--color-text);
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: -0.02em;
+      }
+
+      .brand:focus-visible {
+        outline: 3px solid var(--color-primary);
+        outline-offset: 4px;
+        border-radius: 8px;
+      }
+
+      .brand-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background-color: var(--color-primary-soft);
+        color: var(--color-primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .demo-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 12px;
+        border-radius: 999px;
+        background-color: var(--color-primary-soft);
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary-border);
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Main Layout */
+      .page-main {
+        flex: 1;
+        width: 100%;
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 28px 18px 56px;
+      }
+
+      /* Hero */
+      .hero {
+        margin-bottom: 24px;
+      }
+
+      .hero-title {
+        margin: 0 0 8px;
+        font-size: clamp(1.65rem, 4vw, 2.35rem);
+        font-weight: 700;
+        line-height: 1.22;
+        letter-spacing: -0.02em;
+        color: var(--color-text);
+        text-wrap: balance;
+      }
+
+      .hero-subtext {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--color-text-muted);
+        max-width: 58ch;
+      }
+
+      /* Card */
+      .card {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        padding: 22px 18px;
+      }
+
+      /* Error Banner */
+      .error-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: var(--radius-control);
+        background-color: var(--color-error-bg);
+        border: 1px solid var(--color-error-border);
+        color: var(--color-error);
+        font-size: 0.94rem;
+        font-weight: 500;
+      }
+
+      .error-banner[hidden] {
+        display: none;
+      }
+
+      .error-banner-icon {
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      /* Form Grid */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field-label-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .field-label {
+        font-size: 0.94rem;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .field-range {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--color-accent);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .input-shell {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        background-color: var(--color-bg);
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius-control);
+        transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+          background-color var(--transition-fast);
+      }
+
+      .input-shell:hover {
+        border-color: #b7c6b8;
+      }
+
+      .input-shell:focus-within {
+        background-color: var(--color-surface);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.16);
+      }
+
+      .field-group.has-error .input-shell {
+        border-color: var(--color-error);
+        background-color: var(--color-error-bg);
+      }
+
+      .field-group.has-error .input-shell:focus-within {
+        box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.16);
+      }
+
+      .field-input {
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 0;
+        background: transparent;
+        color: var(--color-text);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        outline: none;
+      }
+
+      .field-input::placeholder {
+        color: #8b98a5;
+        font-weight: 400;
+      }
+
+      .field-unit {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 14px;
+        border-left: 1px solid var(--color-border);
+        background-color: rgba(232, 245, 233, 0.45);
+        color: var(--color-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      .field-hint {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+
+      .field-error {
+        margin: 0;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--color-error);
+        display: none;
+      }
+
+      .field-group.has-error .field-error {
+        display: block;
+      }
+
+      /* Form Actions */
+      .form-actions {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn {
+        min-height: 50px;
+        padding: 12px 22px;
+        border-radius: var(--radius-control);
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: background-color var(--transition-fast), border-color var(--transition-fast),
+          transform var(--transition-fast), box-shadow var(--transition-fast);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .btn:focus-visible {
+        outline: 3px solid var(--color-primary);
+        outline-offset: 3px;
+      }
+
+      .btn:active:not(:disabled) {
+        transform: scale(0.99);
+      }
+
+      .btn-primary {
+        width: 100%;
+        border: 1px solid var(--color-primary);
+        background-color: var(--color-primary);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.22);
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background-color: var(--color-primary-hover);
+      }
+
+      .btn-primary:active:not(:disabled) {
+        background-color: var(--color-primary-active);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.85;
+        cursor: wait;
+      }
+
+      .btn-secondary {
+        width: 100%;
+        border: 1.5px solid var(--color-border);
+        background-color: var(--color-surface);
+        color: var(--color-accent);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background-color: var(--color-accent-soft);
+        border-color: #cbbab1;
+      }
+
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2.5px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+        display: none;
+      }
+
+      .btn-primary.is-loading .spinner {
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Results Section */
+      .results-section {
+        margin-top: 32px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 260ms ease-out, transform 260ms ease-out;
+      }
+
+      .results-section[hidden] {
+        display: none;
+      }
+
+      .results-section.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .section-heading {
+        margin: 0 0 16px;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--color-text);
+        letter-spacing: -0.015em;
+      }
+
+      .crop-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .crop-card {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        padding: 18px;
+        box-shadow: var(--shadow-card);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .crop-card.is-best {
+        background: linear-gradient(155deg, #ffffff 0%, var(--color-primary-soft) 65%, var(--color-gold-bg) 100%);
+        border: 1.5px solid var(--color-primary);
+        box-shadow: var(--shadow-highlight);
+      }
+
+      .crop-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background-color: var(--color-bg);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+      }
+
+      .crop-card.is-best .rank-badge {
+        background-color: var(--color-gold-bg);
+        color: #8a5a00;
+        border-color: var(--color-gold-border);
+      }
+
+      .crop-identity {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .crop-emoji-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background-color: var(--color-primary-soft);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.65rem;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+
+      .crop-card.is-best .crop-emoji-box {
+        background-color: #ffffff;
+        border: 1px solid var(--color-primary-border);
+      }
+
+      .crop-name {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--color-text);
+      }
+
+      .crop-subtitle {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+
+      .confidence-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+      }
+
+      .confidence-label {
+        color: var(--color-text-muted);
+        font-weight: 500;
+      }
+
+      .confidence-value {
+        font-weight: 700;
+        color: var(--color-primary);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background-color: #e6ece6;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background-color: var(--color-accent);
+        transition: width 450ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .crop-card.is-best .progress-fill {
+        background: linear-gradient(90deg, var(--color-primary) 0%, #43a047 65%, var(--color-gold) 100%);
+      }
+
+      /* Feature Importance Card */
+      .importance-card {
+        margin-top: 20px;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        padding: 20px 18px;
+      }
+
+      .importance-title {
+        margin: 0 0 16px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--color-text);
+      }
+
+      .importance-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .importance-item {
+        display: grid;
+        grid-template-columns: 112px 1fr 48px;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .importance-name {
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--color-text);
+      }
+
+      .importance-bar-track {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background-color: var(--color-primary-soft);
+        overflow: hidden;
+      }
+
+      .importance-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background-color: var(--color-primary);
+        transition: width 450ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .importance-item:nth-child(n + 4) .importance-bar-fill {
+        background-color: var(--color-accent);
+        opacity: 0.85;
+      }
+
+      .importance-pct {
+        text-align: right;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .results-disclaimer {
+        margin: 18px 0 0;
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-align: center;
+      }
+
+      .try-again-wrap {
+        margin-top: 18px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .try-again-wrap .btn-secondary {
+        max-width: 280px;
+      }
+
+      /* Footer */
+      .site-footer {
+        border-top: 1px solid var(--color-border);
+        background-color: var(--color-surface);
+        padding: 18px 20px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+      }
+
+      /* Tablet & Desktop Responsive Rules */
+      @media (min-width: 640px) {
+        .page-main {
+          padding: 40px 24px 72px;
+        }
+
+        .card {
+          padding: 28px 30px;
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 20px 22px;
+        }
+
+        .field-group--full {
+          grid-column: 1 / -1;
+        }
+
+        .form-actions {
+          flex-direction: row;
+          align-items: center;
+        }
+
+        .btn-primary {
+          flex: 1;
+        }
+
+        .btn-secondary {
+          width: auto;
+          min-width: 140px;
+        }
+
+        .crop-cards {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 16px;
+        }
+
+        .importance-card {
+          padding: 24px 28px;
+        }
+
+        .importance-item {
+          grid-template-columns: 130px 1fr 56px;
+          gap: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#top" class="brand" id="top">
+          <span class="brand-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+            </svg>
+          </span>
+          <span>AgriSmart</span>
+        </a>
+        <span class="demo-badge">MVP Demo</span>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="hero" aria-labelledby="hero-heading">
+        <h1 id="hero-heading" class="hero-title">Find the right crop for your soil 🌱</h1>
+        <p class="hero-subtext">Enter your soil and environmental conditions.</p>
+      </section>
+
+      <section class="card" aria-label="Soil and environmental conditions input form">
+        <div id="error-banner" class="error-banner" role="alert" hidden>
+          <svg class="error-banner-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>Could not get a prediction. Please try again.</span>
+        </div>
+
+        <form id="crop-form" novalidate>
+          <div class="form-grid">
+            <div class="field-group" data-field="N">
+              <div class="field-label-row">
+                <label class="field-label" for="input-N">Nitrogen (N)</label>
+                <span class="field-range">0–140</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-N"
+                  name="N"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 90"
+                  aria-describedby="hint-N error-N"
+                />
+                <span class="field-unit" aria-hidden="true">kg/ha</span>
+              </div>
+              <p id="hint-N" class="field-hint">Nitrogen content in soil (0–140 kg/ha)</p>
+              <p id="error-N" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group" data-field="P">
+              <div class="field-label-row">
+                <label class="field-label" for="input-P">Phosphorus (P)</label>
+                <span class="field-range">5–145</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-P"
+                  name="P"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 42"
+                  aria-describedby="hint-P error-P"
+                />
+                <span class="field-unit" aria-hidden="true">kg/ha</span>
+              </div>
+              <p id="hint-P" class="field-hint">Phosphorus content in soil (5–145 kg/ha)</p>
+              <p id="error-P" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group" data-field="K">
+              <div class="field-label-row">
+                <label class="field-label" for="input-K">Potassium (K)</label>
+                <span class="field-range">5–205</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-K"
+                  name="K"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 43"
+                  aria-describedby="hint-K error-K"
+                />
+                <span class="field-unit" aria-hidden="true">kg/ha</span>
+              </div>
+              <p id="hint-K" class="field-hint">Potassium content in soil (5–205 kg/ha)</p>
+              <p id="error-K" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group" data-field="temperature">
+              <div class="field-label-row">
+                <label class="field-label" for="input-temperature">Temperature</label>
+                <span class="field-range">8–44</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-temperature"
+                  name="temperature"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 24.5"
+                  aria-describedby="hint-temperature error-temperature"
+                />
+                <span class="field-unit" aria-hidden="true">°C</span>
+              </div>
+              <p id="hint-temperature" class="field-hint">Average ambient temperature (8–44 °C)</p>
+              <p id="error-temperature" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group" data-field="humidity">
+              <div class="field-label-row">
+                <label class="field-label" for="input-humidity">Humidity</label>
+                <span class="field-range">14–100</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-humidity"
+                  name="humidity"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 82"
+                  aria-describedby="hint-humidity error-humidity"
+                />
+                <span class="field-unit" aria-hidden="true">%</span>
+              </div>
+              <p id="hint-humidity" class="field-hint">Relative air humidity (14–100 %)</p>
+              <p id="error-humidity" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group" data-field="ph">
+              <div class="field-label-row">
+                <label class="field-label" for="input-ph">Soil pH</label>
+                <span class="field-range">3.5–9.9</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-ph"
+                  name="ph"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 6.5"
+                  aria-describedby="hint-ph error-ph"
+                />
+                <span class="field-unit" aria-hidden="true">pH</span>
+              </div>
+              <p id="hint-ph" class="field-hint">Soil acidity or alkalinity (3.5–9.9 pH)</p>
+              <p id="error-ph" class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field-group field-group--full" data-field="rainfall">
+              <div class="field-label-row">
+                <label class="field-label" for="input-rainfall">Rainfall</label>
+                <span class="field-range">20–300</span>
+              </div>
+              <div class="input-shell">
+                <input
+                  id="input-rainfall"
+                  name="rainfall"
+                  class="field-input"
+                  type="text"
+                  inputmode="decimal"
+                  autocomplete="off"
+                  placeholder="e.g. 202"
+                  aria-describedby="hint-rainfall error-rainfall"
+                />
+                <span class="field-unit" aria-hidden="true">mm</span>
+              </div>
+              <p id="hint-rainfall" class="field-hint">Seasonal rainfall level (20–300 mm)</p>
+              <p id="error-rainfall" class="field-error" role="alert"></p>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button id="predict-btn" type="submit" class="btn btn-primary">
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="predict-btn-text">Predict suitable crop</span>
+            </button>
+            <button id="reset-btn" type="button" class="btn btn-secondary">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section
+        id="results-section"
+        class="results-section"
+        aria-labelledby="results-heading"
+        aria-live="polite"
+        hidden
+      >
+        <h2 id="results-heading" class="section-heading">Top 3 recommended crops</h2>
+
+        <div id="crop-cards" class="crop-cards"></div>
+
+        <div class="importance-card">
+          <h3 class="importance-title">What the model relies on overall</h3>
+          <ul id="importance-list" class="importance-list"></ul>
+        </div>
+
+        <p class="results-disclaimer">
+          Indicative results only. Based on a model trained on a sample dataset.
+        </p>
+
+        <div class="try-again-wrap">
+          <button id="try-again-btn" type="button" class="btn btn-secondary">Try again</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      AgriSmart MVP · AI/ML Project
+    </footer>
+
+    <script>
+      (function () {
+        'use strict';
+
+        const FIELD_RULES = {
+          N: { label: 'Nitrogen (N)', min: 0, max: 140, unit: 'kg/ha' },
+          P: { label: 'Phosphorus (P)', min: 5, max: 145, unit: 'kg/ha' },
+          K: { label: 'Potassium (K)', min: 5, max: 205, unit: 'kg/ha' },
+          temperature: { label: 'Temperature', min: 8, max: 44, unit: '°C' },
+          humidity: { label: 'Humidity', min: 14, max: 100, unit: '%' },
+          ph: { label: 'Soil pH', min: 3.5, max: 9.9, unit: 'pH' },
+          rainfall: { label: 'Rainfall', min: 20, max: 300, unit: 'mm' }
+        };
+
+        const FEATURE_LABELS = {
+          N: 'Nitrogen (N)',
+          P: 'Phosphorus (P)',
+          K: 'Potassium (K)',
+          temperature: 'Temperature',
+          humidity: 'Humidity',
+          ph: 'Soil pH',
+          rainfall: 'Rainfall'
+        };
+
+        const CROP_EMOJIS = {
+          rice: '🌾',
+          jute: '🌿',
+          coconut: '🥥',
+          maize: '🌽',
+          cotton: '☁️',
+          coffee: '☕',
+          mango: '🥭',
+          banana: '🍌',
+          apple: '🍎',
+          grapes: '🍇',
+          watermelon: '🍉',
+          muskmelon: '🍈',
+          orange: '🍊',
+          papaya: '🥭',
+          pomegranate: '🍎',
+          chickpea: '🫘',
+          kidneybeans: '🫘',
+          pigeonpeas: '🫛',
+          mothbeans: '🫘',
+          mungbean: '🫛',
+          blackgram: '🫘',
+          lentil: '🫘'
+        };
+
+        const form = document.getElementById('crop-form');
+        const predictBtn = document.getElementById('predict-btn');
+        const predictBtnText = document.getElementById('predict-btn-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const tryAgainBtn = document.getElementById('try-again-btn');
+        const errorBanner = document.getElementById('error-banner');
+        const resultsSection = document.getElementById('results-section');
+        const cropCardsEl = document.getElementById('crop-cards');
+        const importanceListEl = document.getElementById('importance-list');
+
+        /**
+         * Predicts suitable crops for the given soil and weather parameters.
+         * Replace the mock implementation below with the fetch() call to connect your Flask backend.
+         *
+         * @param {{ N: number, P: number, K: number, temperature: number, humidity: number, ph: number, rainfall: number }} data
+         * @returns {Promise<{ recommendations: Array<{ rank: number, crop: string, confidence: number }>, feature_importance: Record<string, number> }>}
+         */
+        async function predictCrop(data) {
+          /*
+           * Flask API integration example (replace the mock return below when ready):
+           *
+           * const response = await fetch('/predict', {
+           *   method: 'POST',
+           *   headers: {
+           *     'Content-Type': 'application/json'
+           *   },
+           *   body: JSON.stringify({
+           *     N: data.N,
+           *     P: data.P,
+           *     K: data.K,
+           *     temperature: data.temperature,
+           *     humidity: data.humidity,
+           *     ph: data.ph,
+           *     rainfall: data.rainfall
+           *   })
+           * });
+           *
+           * if (!response.ok) {
+           *   throw new Error('Prediction request failed with status ' + response.status);
+           * }
+           *
+           * return await response.json();
+           */
+
+          void data;
+
+          await new Promise(function (resolve) {
+            setTimeout(resolve, 1000);
+          });
+
+          return {
+            recommendations: [
+              { rank: 1, crop: 'rice', confidence: 0.82 },
+              { rank: 2, crop: 'jute', confidence: 0.11 },
+              { rank: 3, crop: 'coconut', confidence: 0.04 }
+            ],
+            feature_importance: {
+              rainfall: 0.22,
+              humidity: 0.21,
+              K: 0.18,
+              P: 0.15,
+              N: 0.10,
+              temperature: 0.08,
+              ph: 0.06
+            }
+          };
+        }
+
+        function setFieldError(fieldName, message) {
+          const group = form.querySelector('.field-group[data-field="' + fieldName + '"]');
+          const input = document.getElementById('input-' + fieldName);
+          const errorEl = document.getElementById('error-' + fieldName);
+
+          if (!group || !input || !errorEl) return;
+
+          if (message) {
+            group.classList.add('has-error');
+            input.setAttribute('aria-invalid', 'true');
+            errorEl.textContent = message;
+          } else {
+            group.classList.remove('has-error');
+            input.removeAttribute('aria-invalid');
+            errorEl.textContent = '';
+          }
+        }
+
+        function validateField(fieldName) {
+          const rule = FIELD_RULES[fieldName];
+          const input = document.getElementById('input-' + fieldName);
+          const raw = input.value.trim();
+
+          if (raw === '') {
+            const msg = rule.label + ' is required.';
+            setFieldError(fieldName, msg);
+            return { valid: false, value: null };
+          }
+
+          if (!/^-?\d+(\.\d+)?$/.test(raw)) {
+            const msg = 'Enter a valid number for ' + rule.label + '.';
+            setFieldError(fieldName, msg);
+            return { valid: false, value: null };
+          }
+
+          const num = Number(raw);
+          if (!Number.isFinite(num)) {
+            const msg = 'Enter a valid number for ' + rule.label + '.';
+            setFieldError(fieldName, msg);
+            return { valid: false, value: null };
+          }
+
+          if (num < rule.min || num > rule.max) {
+            const msg =
+              rule.label + ' must be between ' + rule.min + ' and ' + rule.max + ' ' + rule.unit + '.';
+            setFieldError(fieldName, msg);
+            return { valid: false, value: null };
+          }
+
+          setFieldError(fieldName, '');
+          return { valid: true, value: num };
+        }
+
+        function validateAll() {
+          const parsed = {};
+          let firstInvalidInput = null;
+          let allValid = true;
+
+          Object.keys(FIELD_RULES).forEach(function (fieldName) {
+            const result = validateField(fieldName);
+            if (!result.valid) {
+              allValid = false;
+              if (!firstInvalidInput) {
+                firstInvalidInput = document.getElementById('input-' + fieldName);
+              }
+            } else {
+              parsed[fieldName] = result.value;
+            }
+          });
+
+          return { allValid: allValid, parsed: parsed, firstInvalidInput: firstInvalidInput };
+        }
+
+        function setLoading(isLoading) {
+          predictBtn.disabled = isLoading;
+          resetBtn.disabled = isLoading;
+          if (isLoading) {
+            predictBtn.classList.add('is-loading');
+            predictBtnText.textContent = 'Analyzing soil...';
+          } else {
+            predictBtn.classList.remove('is-loading');
+            predictBtnText.textContent = 'Predict suitable crop';
+          }
+        }
+
+        function formatCropName(name) {
+          if (!name) return '';
+          return String(name)
+            .trim()
+            .replace(/[_-]+/g, ' ')
+            .replace(/\b\w/g, function (c) {
+              return c.toUpperCase();
+            });
+        }
+
+        function getCropEmoji(name) {
+          const key = String(name || '')
+            .trim()
+            .toLowerCase();
+          return CROP_EMOJIS[key] || '🌱';
+        }
+
+        function hideResults() {
+          resultsSection.classList.remove('is-visible');
+          resultsSection.hidden = true;
+          cropCardsEl.innerHTML = '';
+          importanceListEl.innerHTML = '';
+        }
+
+        function renderResults(result) {
+          if (
+            !result ||
+            !Array.isArray(result.recommendations) ||
+            !result.feature_importance
+          ) {
+            throw new Error('Unexpected prediction response shape.');
+          }
+
+          const recommendations = result.recommendations
+            .slice()
+            .sort(function (a, b) {
+              return a.rank - b.rank;
+            })
+            .slice(0, 3);
+
+          cropCardsEl.innerHTML = '';
+
+          recommendations.forEach(function (item) {
+            const isBest = Number(item.rank) === 1;
+            const pct = Math.max(0, Math.min(100, Math.round(Number(item.confidence) * 100)));
+
+            const card = document.createElement('article');
+            card.className = 'crop-card' + (isBest ? ' is-best' : '');
+
+            const topRow = document.createElement('div');
+            topRow.className = 'crop-card-top';
+
+            const badge = document.createElement('span');
+            badge.className = 'rank-badge';
+            badge.textContent = isBest ? '#1 Best Match' : 'Rank #' + item.rank;
+            topRow.appendChild(badge);
+
+            const identity = document.createElement('div');
+            identity.className = 'crop-identity';
+
+            const emojiBox = document.createElement('div');
+            emojiBox.className = 'crop-emoji-box';
+            emojiBox.setAttribute('aria-hidden', 'true');
+            emojiBox.textContent = getCropEmoji(item.crop);
+
+            const textWrap = document.createElement('div');
+            const cropTitle = document.createElement('h3');
+            cropTitle.className = 'crop-name';
+            cropTitle.textContent = formatCropName(item.crop);
+
+            const cropSub = document.createElement('p');
+            cropSub.className = 'crop-subtitle';
+            cropSub.textContent = isBest ? 'Top suitability score' : 'Alternative option';
+
+            textWrap.appendChild(cropTitle);
+            textWrap.appendChild(cropSub);
+            identity.appendChild(emojiBox);
+            identity.appendChild(textWrap);
+
+            const meterWrap = document.createElement('div');
+            const confRow = document.createElement('div');
+            confRow.className = 'confidence-row';
+
+            const confLabel = document.createElement('span');
+            confLabel.className = 'confidence-label';
+            confLabel.textContent = 'Confidence';
+
+            const confValue = document.createElement('span');
+            confValue.className = 'confidence-value';
+            confValue.textContent = pct + '%';
+
+            confRow.appendChild(confLabel);
+            confRow.appendChild(confValue);
+
+            const track = document.createElement('div');
+            track.className = 'progress-track';
+            track.setAttribute('role', 'progressbar');
+            track.setAttribute('aria-label', formatCropName(item.crop) + ' confidence');
+            track.setAttribute('aria-valuemin', '0');
+            track.setAttribute('aria-valuemax', '100');
+            track.setAttribute('aria-valuenow', String(pct));
+
+            const fill = document.createElement('div');
+            fill.className = 'progress-fill';
+            fill.style.width = '0%';
+            track.appendChild(fill);
+
+            meterWrap.appendChild(confRow);
+            meterWrap.appendChild(track);
+
+            card.appendChild(topRow);
+            card.appendChild(identity);
+            card.appendChild(meterWrap);
+            cropCardsEl.appendChild(card);
+
+            requestAnimationFrame(function () {
+              fill.style.width = pct + '%';
+            });
+          });
+
+          const sortedFeatures = Object.entries(result.feature_importance).sort(function (a, b) {
+            return Number(b[1]) - Number(a[1]);
+          });
+
+          const maxImportance = sortedFeatures.reduce(function (max, entry) {
+            return Math.max(max, Number(entry[1]) || 0);
+          }, 0.01);
+
+          importanceListEl.innerHTML = '';
+
+          sortedFeatures.forEach(function (entry) {
+            const key = entry[0];
+            const val = Number(entry[1]) || 0;
+            const pct = Math.round(val * 100);
+            const barWidth = Math.max(4, Math.round((val / maxImportance) * 100));
+
+            const li = document.createElement('li');
+            li.className = 'importance-item';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'importance-name';
+            nameSpan.textContent = FEATURE_LABELS[key] || key;
+
+            const barTrack = document.createElement('div');
+            barTrack.className = 'importance-bar-track';
+            barTrack.setAttribute('role', 'progressbar');
+            barTrack.setAttribute('aria-label', (FEATURE_LABELS[key] || key) + ' importance');
+            barTrack.setAttribute('aria-valuemin', '0');
+            barTrack.setAttribute('aria-valuemax', '100');
+            barTrack.setAttribute('aria-valuenow', String(pct));
+
+            const barFill = document.createElement('div');
+            barFill.className = 'importance-bar-fill';
+            barFill.style.width = '0%';
+            barTrack.appendChild(barFill);
+
+            const pctSpan = document.createElement('span');
+            pctSpan.className = 'importance-pct';
+            pctSpan.textContent = pct + '%';
+
+            li.appendChild(nameSpan);
+            li.appendChild(barTrack);
+            li.appendChild(pctSpan);
+            importanceListEl.appendChild(li);
+
+            requestAnimationFrame(function () {
+              barFill.style.width = barWidth + '%';
+            });
+          });
+
+          resultsSection.hidden = false;
+          requestAnimationFrame(function () {
+            resultsSection.classList.add('is-visible');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
+
+        function clearFormAndErrors() {
+          form.reset();
+          errorBanner.hidden = true;
+          Object.keys(FIELD_RULES).forEach(function (fieldName) {
+            setFieldError(fieldName, '');
+          });
+          hideResults();
+        }
+
+        Object.keys(FIELD_RULES).forEach(function (fieldName) {
+          const input = document.getElementById('input-' + fieldName);
+          input.addEventListener('input', function () {
+            errorBanner.hidden = true;
+            const group = form.querySelector('.field-group[data-field="' + fieldName + '"]');
+            if (group && group.classList.contains('has-error')) {
+              validateField(fieldName);
+            }
+          });
+        });
+
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          errorBanner.hidden = true;
+
+          const validation = validateAll();
+          if (!validation.allValid) {
+            if (validation.firstInvalidInput) {
+              validation.firstInvalidInput.focus();
+            }
+            return;
+          }
+
+          setLoading(true);
+          hideResults();
+
+          try {
+            const prediction = await predictCrop(validation.parsed);
+            renderResults(prediction);
+          } catch (err) {
+            console.error(err);
+            errorBanner.hidden = false;
+            errorBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } finally {
+            setLoading(false);
+          }
+        });
+
+        resetBtn.addEventListener('click', function () {
+          clearFormAndErrors();
+          document.getElementById('input-N').focus();
+        });
+
+        tryAgainBtn.addEventListener('click', function () {
+          hideResults();
+          errorBanner.hidden = true;
+          form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.getElementById('input-N').focus();
+        });
+      })();
+    </script>
+  </body>
+</html>
